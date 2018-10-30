@@ -12,9 +12,10 @@ public class SimpleThreadsGenerator {
 
         List<Thread> threads = new ArrayList<>();
         while (true) {
-            threads.add(new Thread());
-            Utils.printMemoryUsage(memoryMXBean.getHeapMemoryUsage(), threads.size());
-            Utils.printMemoryUsage(memoryMXBean.getNonHeapMemoryUsage(), threads.size());
+            Thread e = new Thread();
+            threads.add(e);
+            e.start();
+            Utils.printMemoryUsage(memoryMXBean, threads.size());
         }
     }
 }

@@ -20,9 +20,48 @@ CompilerThreadStackSize	Compiler Thread Stack Size (in Kbytes)
 - The former one is default for the majority of JVMs
 - The latter one is flag only for Hotspot
 
-`jcmd <pid> VM.native_memory`
+```
+jcmd <pid> VM.native_memory [summary | detail | baseline | summary.diff | detail.diff | shutdown] [scale= KB | MB | GB]
+
+summary	        Print a summary aggregated by category.
+detail	        Print memory usage aggregated by category
+                Print virtual memory map
+                Print memory usage aggregated by call site
+baseline	    Create a new memory usage snapshot to diff against.
+summary.diff	Print a new summary report against the last baseline.
+detail.diff	    Print a new detail report against the last baseline.
+shutdown	    Shutdown NMT.
+```
 
 ### Logging info about Threads
+
+```
+Thread (reserved=15427KB, committed=15427KB)
+       (thread #15)
+       (stack: reserved=15360KB, committed=15360KB)
+       (malloc=50KB #84)
+       (arena=18KB #28)
+```
+
+- 15 threads == 15MB COMMITTED Memory
+- `malloc=50KB` the real memory?
+- https://docs.oracle.com/javase/9/docs/api/java/lang/management/MemoryUsage.html
+
+```
+represents the amount of memory (in bytes) that is guaranteed to be available 
+for use by the Java virtual machine. The amount of committed memory may change 
+over time (increase or decrease). The Java virtual machine may release memory 
+to the system and committed could be less than init. committed will always be 
+greater than or equal to used.
+``` 
+
+```
+-XX:NativeMemoryTracking=[off | summary | detail]
+
+off	    NMT is turned off by default.
+summary	Only collect memory usage aggregated by subsystem.
+detail	Collect memory usage by individual call sites.
+```
 
 ```
 $ java -XX:+UnlockDiagnosticVMOptions -XX:NativeMemoryTracking=summary -XX:+PrintNMTStatistics -version
@@ -138,7 +177,7 @@ RAM = 2BM
 ### Cost of threads
 - Stack Memory - 1MB by default, 
 - Context-Switches
-- Safepointing
+- Safe-pointing
 - GC Roots
 
 - `pstree` program
@@ -146,3 +185,31 @@ RAM = 2BM
 
 ### TODOs
 - How it works in docker?
+- How to limit non-heap size for stacks? (-XX:MaxRAM ?)
+
+### Links
+- https://shipilev.net/jvm-anatomy-park/12-native-memory-tracking/
+
+### Interesting Snippets
+
+```
+-XX:VMThreadStackSize=256:
+
+-Total: reserved=1165843KB, committed=29571KB
++Total: reserved=1163539KB, committed=27267KB
+
+--                    Thread (reserved=4419KB, committed=4419KB)
++-                    Thread (reserved=2115KB, committed=2115KB)
+                             (thread #8)
+-                            (stack: reserved=4384KB, committed=4384KB)
++                            (stack: reserved=2080KB, committed=2080KB)
+                             (malloc=26KB #42)
+                             (arena=9KB #16)
+```
+
+```
+-XX:MaxRAM=n	
+
+Sets the maximum amount of memory used by the JVM to n, where n may be expressed
+in terms of megabytes 100m or gigabytes 2g.
+```
