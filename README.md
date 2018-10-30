@@ -1,4 +1,4 @@
-# threads-memory
+# Java Threads and Memory
 
 ```
 java -Xmx512m \
@@ -186,6 +186,10 @@ RAM = 2BM
 ### TODOs
 - How it works in docker?
 - How to limit non-heap size for stacks? (-XX:MaxRAM ?)
+- Create a small program and compare outputs from:
+    - htop
+    - -XX:+PrintNMTStatistics
+    - JCMD
 
 ### Links
 - https://shipilev.net/jvm-anatomy-park/12-native-memory-tracking/
