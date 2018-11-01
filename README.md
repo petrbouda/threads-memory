@@ -190,6 +190,8 @@ RAM = 2BM
     - htop
     - -XX:+PrintNMTStatistics
     - JCMD
+- Zalozit treba 500 vlaken a pak Thread.join() a juknout se jak vypadaji htop - VIRT and RES
+- pak zacit trochu pridavat loklani promenne abych to zeslozitil
 
 ### Links
 - https://shipilev.net/jvm-anatomy-park/12-native-memory-tracking/
